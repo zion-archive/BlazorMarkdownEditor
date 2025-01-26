@@ -2,21 +2,25 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <ApplicationIcon>psc_logo.ico</ApplicationIcon>
+    <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>PSC.Blazor.Components.MarkdownEditor.Fork</PackageId>
+    <ApplicationIcon>psc_logo.ico</ApplicationIcon>
     <PackageIcon>psc_logo.png</PackageIcon>
-    <PackageIconUrl />
-    <Authors>Enrico Rossini</Authors>
-    <Company>Enrico Rossini - PureSourceCode.com</Company>
-    <Description>Another Markdown editor for Blazor</Description>
-    <RepositoryUrl>https://github.com/erossini/BlazorMarkdownEditor</RepositoryUrl>
+    <Authors>Daniel Slavík</Authors>
+    <Company>Zion Archive</Company>
+    <Description>
+      Another Markdown editor for Blazor. 
+      Forked version by wortelus for Zion Archive, originally from Enrico Rossini - PureSourceCode.com.
+    </Description>
+    <RepositoryUrl>https://github.com/zion-archive/BlazorMarkdownEditor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blazor, blazor-webassembly, blazor-server</PackageTags>
-    <PackageReleaseNotes>Add functions to delete clear data created by Markdown Editor</PackageReleaseNotes>
+    <PackageReleaseNotes>Forked version for Zion Archive by wortelus.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageProjectUrl>https://www.puresourcecode.com/dotnet/blazor/markdown-editor-component-for-blazor/</PackageProjectUrl>
-    <Copyright>Enrico Rossini - PureSourceCode.com</Copyright>
-    <Title>Markdown Editor for Blazor</Title>
+    <PackageProjectUrl>https://github.com/zion-archive/BlazorMarkdownEditor</PackageProjectUrl>
+    <Copyright>Daniel Slavík</Copyright>
+    <Title>Markdown Editor for Blazor (Zion Archive fork)</Title>
   </PropertyGroup>
 
   
