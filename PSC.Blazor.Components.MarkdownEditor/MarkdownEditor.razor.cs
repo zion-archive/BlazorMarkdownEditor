@@ -490,7 +490,7 @@ namespace PSC.Blazor.Components.MarkdownEditor
         /// Callback function to translate media URL from the saved format to the valid object URL.
         /// </summary>
         [Parameter]
-        public Func<string, string> TranslateMediaUrl { get; set; }
+        public Func<string, string[]> TranslateMediaUrl { get; set; }
 
         #endregion Parameters
 
@@ -575,10 +575,10 @@ namespace PSC.Blazor.Components.MarkdownEditor
         /// </remarks> 
         /// <returns>Translated media URL.</returns>
         [JSInvokable]
-        public string GetMediaUrl(string alias)
+        public string[] GetMediaUrl(string alias)
         {
             if (string.IsNullOrEmpty(alias))
-                return string.Empty;
+                return [string.Empty, string.Empty];
 
             if (TranslateMediaUrl is not null)
                 return TranslateMediaUrl(alias);

@@ -104,7 +104,7 @@ function initialize(dotNetObjectRef, element, elementId, options) {
     // mediaHrefTranslator is a function that translates the media alias to the actual URL
     const mediaHrefTranslator = function (alias) {
         if (!alias.startsWith('zmedia:'))
-            return alias;
+            return [alias, null];
 
         return dotNetObjectRef.invokeMethod("GetMediaUrl", alias);
     };
@@ -118,7 +118,7 @@ function initialize(dotNetObjectRef, element, elementId, options) {
     const renderer = new marked.Renderer();
     renderer.image = function (href, title, text) {
         if (href && href.startsWith('zmedia:'))
-            href = mediaHrefTranslator(href);
+            [href, _] = mediaHrefTranslator(href);
 
         return window.__originalMarkedRendererImage.call(this, href, title, text);
     };
@@ -173,8 +173,14 @@ function initialize(dotNetObjectRef, element, elementId, options) {
                             videoCode = videoCode + '<iframe width="560" height="315" src="' + code + '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
                         else if (code.includes("vimeo.com"))
                             videoCode = videoCode + '<iframe src="' + code + '" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>';
-                        else
-                            videoCode = videoCode + '<video controls><source src="' + code + '" type="video/mp4"></video>';
+                        else {
+                            let contentType;
+                            if (code.startsWith("zmedia:"))
+                                [code, contentType] = mediaHrefTranslator(code);
+                            if (!contentType)
+                                contentType = "video/mp4";
+                            videoCode = videoCode + '<video controls><source src="' + code + '" type="' + contentType + '"></video>';
+                        }
 
                         videoCode = videoCode + '</div>';
                         return videoCode;
