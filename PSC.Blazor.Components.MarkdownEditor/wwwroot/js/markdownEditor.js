@@ -100,6 +100,28 @@ function initialize(dotNetObjectRef, element, elementId, options) {
             ];
         }
     }
+    
+    // mediaHrefTranslator is a function that translates the media alias to the actual URL
+    const mediaHrefTranslator = function (alias) {
+        if (!alias.startsWith('zmedia:'))
+            return alias;
+
+        return dotNetObjectRef.invokeMethod("GetMediaUrl", alias);
+    };
+    
+    // register the original image renderer from Marked
+    if (typeof marked !== 'undefined' && window.__originalMarkedRendererImage === undefined) {
+        window.__originalMarkedRendererImage = marked.Renderer.prototype.image;
+    }
+
+    // override the image renderer to handle media alias (zmedia:)
+    const renderer = new marked.Renderer();
+    renderer.image = function (href, title, text) {
+        if (href && href.startsWith('zmedia:'))
+            href = mediaHrefTranslator(href);
+
+        return window.__originalMarkedRendererImage.call(this, href, title, text);
+    };
 
     const easyMDE = new EasyMDE({
         element: document.getElementById(elementId),
@@ -109,6 +131,7 @@ function initialize(dotNetObjectRef, element, elementId, options) {
             singleLineBreaks: false,
             codeSyntaxHighlighting: false,
             markedOptions: {
+                renderer: renderer,
                 langPrefix: "",
                 highlight: function (code, lang) {
                     if (lang === "mermaid" && mermaidInstalled) {

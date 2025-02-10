@@ -11,5 +11,6 @@ namespace PSC.Blazor.Components.MarkdownEditor
         internal static string MarkdownJs = "/_content/PSC.Blazor.Components.MarkdownEditor/js/markdownEditor.js";
         internal static string EasyMDEJS = "/_content/PSC.Blazor.Components.MarkdownEditor/js/easymde.min.js";
         internal static string EasyMDECSS = "/_content/PSC.Blazor.Components.MarkdownEditor/css/easymde.min.css";
+        internal static string MarkedJS = "/_content/PSC.Blazor.Components.MarkdownEditor/js/marked.min.js";
     }
 }

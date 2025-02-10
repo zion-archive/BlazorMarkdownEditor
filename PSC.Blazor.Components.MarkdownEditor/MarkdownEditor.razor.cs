@@ -485,6 +485,12 @@ namespace PSC.Blazor.Components.MarkdownEditor
         /// <value>The words status text.</value>
         [Parameter]
         public string? WordsStatusText { get; set; } = "words: ";
+        
+        /// <summary>
+        /// Callback function to translate media URL from the saved format to the valid object URL.
+        /// </summary>
+        [Parameter]
+        public Func<string, string> TranslateMediaUrl { get; set; }
 
         #endregion Parameters
 
@@ -557,6 +563,27 @@ namespace PSC.Blazor.Components.MarkdownEditor
                 await JSModule.NotifyImageUploadError(ElementId, $"The property ImageUploadEndpoint is not specified.");
 
             await InvokeAsync(StateHasChanged);
+        }
+        
+        /// <summary>
+        /// Gets the translated media URL based on parameter function TranslateMediaUrl.
+        /// </summary>
+        /// <param name="alias">The media alias to be translated to valid object URL.</param>
+        /// <remarks>
+        /// This method is expected to be called from Marked 'Renderer.image' function only.
+        /// Does not perform media Url format check.
+        /// </remarks> 
+        /// <returns>Translated media URL.</returns>
+        [JSInvokable]
+        public string GetMediaUrl(string alias)
+        {
+            if (string.IsNullOrEmpty(alias))
+                return string.Empty;
+
+            if (TranslateMediaUrl is not null)
+                return TranslateMediaUrl(alias);
+            
+            throw new InvalidOperationException("The TranslateMediaUrl function is not set.");
         }
 
         /// <summary>
