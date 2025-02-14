@@ -1,13 +1,12 @@
-﻿const _instances = [];
+﻿const _easy_mde_instances = new Map();
 
 function initialize(dotNetObjectRef, element, elementId, options) {
-    const instances = _instances;
+    const instances = _easy_mde_instances;
 
     if (!options.toolbar) {
         // remove empty toolbar so that we can fallback to the default items
         delete options.toolbar;
-    }
-    else if (options.toolbar && options.toolbar.length > 0) {
+    } else if (options.toolbar && options.toolbar.length > 0) {
         // map any named action with a real action from EasyMDE
         options.toolbar.forEach(button => {
             // make sure we don't operate on separators
@@ -16,12 +15,10 @@ function initialize(dotNetObjectRef, element, elementId, options) {
                     if (!button.action.startsWith("http")) {
                         button.action = EasyMDE[button.action];
                     }
-                }
-                else {
+                } else {
                     if (button.name && button.name.startsWith("http")) {
                         button.action = button.name;
-                    }
-                    else {
+                    } else {
                         // custom action is used so we need to trigger custom event on click
                         button.action = (editor) => {
                             dotNetObjectRef.invokeMethodAsync('NotifyCustomButtonClicked', button.name, button.value).then(null, function (err) {
@@ -41,8 +38,10 @@ function initialize(dotNetObjectRef, element, elementId, options) {
 
     let nextFileId = 0;
     let imageUploadNotifier = {
-        onSuccess: (e) => { },
-        onError: (e) => { }
+        onSuccess: (e) => {
+        },
+        onError: (e) => {
+        }
     };
 
     var mermaidInstalled = false;
@@ -94,13 +93,13 @@ function initialize(dotNetObjectRef, element, elementId, options) {
                     className: "fa-solid fa-video",
                     title: "Add video",
                 },
-                "|", "video", "|", "quote", "unordered-list", "ordered-list", "|", 
+                "|", "video", "|", "quote", "unordered-list", "ordered-list", "|",
                 "link", "image", "table", "|", "fullscreen",
                 "preview", "|", "guide"
             ];
         }
     }
-    
+
     // mediaHrefTranslator is a function that translates the media alias to the actual URL
     const mediaHrefTranslator = function (alias) {
         if (!alias.startsWith('zmedia:'))
@@ -108,7 +107,7 @@ function initialize(dotNetObjectRef, element, elementId, options) {
 
         return dotNetObjectRef.invokeMethod("GetMediaUrl", alias);
     };
-    
+
     // register the original image renderer from Marked
     if (typeof marked !== 'undefined' && window.__originalMarkedRendererImage === undefined) {
         window.__originalMarkedRendererImage = marked.Renderer.prototype.image;
@@ -141,32 +140,26 @@ function initialize(dotNetObjectRef, element, elementId, options) {
                         var svg = mermaid.render("mermaid0", code);
                         tempDiv.innerHTML = svg;
                         return tempDiv;
-                    }
-                    else if (lang === "code" && hljsInstalled) {
+                    } else if (lang === "code" && hljsInstalled) {
                         const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-                        return hljs.highlight(code, { language }).value;
-                    }
-                    else if (lang === "att") {
+                        return hljs.highlight(code, {language}).value;
+                    } else if (lang === "att") {
                         return '<div class="me-alert callout attention"><p class="title">' +
                             '<span class="me-icon icon-attention"></span> Attention</p><p>' +
                             code + '</p></div>';
-                    }
-                    else if (lang === "tip") {
+                    } else if (lang === "tip") {
                         return '<div class="me-alert callout tip"><p class="title">' +
                             '<span class="me-icon icon-tip"></span> Tip</p><p>' +
                             code + '</p></div>';
-                    }
-                    else if (lang === "note") {
+                    } else if (lang === "note") {
                         return '<div class="me-alert callout note"><p class="title">' +
                             '<span class="me-icon icon-note"></span> Note</p><p>' +
                             code + '</p></div>';
-                    }
-                    else if (lang === "warn") {
+                    } else if (lang === "warn") {
                         return '<div class="me-alert callout warning"><p class="title">' +
                             '<span class="me-icon icon-warning"></span> Warning</p><p>' +
                             code + '</p></div>';
-                    }
-                    else if (lang === "video") {
+                    } else if (lang === "video") {
                         var videoCode = '<div class="video-container">';
 
                         if (code.includes("youtube.com") || code.includes("youtu.be"))
@@ -184,8 +177,7 @@ function initialize(dotNetObjectRef, element, elementId, options) {
 
                         videoCode = videoCode + '</div>';
                         return videoCode;
-                    }
-                    else
+                    } else
                         return code;
                 }
             }
@@ -328,22 +320,20 @@ function deleteAllAutoSave() {
 }
 
 function destroy(element, elementId) {
-    const instances = _instances || {};
+    const instances = _easy_mde_instances || {};
     delete instances[elementId];
 }
 
 function setValue(elementId, value) {
-    console.log("SetValue called");
-    const instance = _instances[elementId];
+    const instance = _easy_mde_instances[elementId];
 
     if (instance) {
-        console.log("SetValue changes value");
         instance.editor.value(value);
     }
 }
 
 function setInitValue(elementId, value) {
-    const instance = _instances[elementId];
+    const instance = _easy_mde_instances[elementId];
 
     if (instance) {
         instance.editor.value(value);
@@ -351,7 +341,7 @@ function setInitValue(elementId, value) {
 }
 
 function getValue(elementId) {
-    const instance = _instances[elementId];
+    const instance = _easy_mde_instances[elementId];
 
     if (instance) {
         return instance.editor.value();
@@ -361,7 +351,7 @@ function getValue(elementId) {
 }
 
 function notifyImageUploadSuccess(elementId, imageUrl) {
-    const instance = _instances[elementId];
+    const instance = _easy_mde_instances[elementId];
 
     if (instance) {
         return instance.imageUploadNotifier.onSuccess(imageUrl);
@@ -369,7 +359,7 @@ function notifyImageUploadSuccess(elementId, imageUrl) {
 }
 
 function notifyImageUploadError(elementId, errorMessage) {
-    const instance = _instances[elementId];
+    const instance = _easy_mde_instances[elementId];
 
     if (instance) {
         return instance.imageUploadNotifier.onError(errorMessage);
@@ -412,26 +402,36 @@ async function NotifyUploadImage(elementId, file, dotNetObjectRef) {
     });
 }
 
-const meLoadCSS = function (name, url) {
+function setTheme(elementId, theme) {
+    const instance = _easy_mde_instances[elementId];
+    instance.editor.codemirror.setOption("theme", theme);
+}
+
+function meLoadCSS(name, url) {
     if (document.getElementById(name))
         return;
 
     return new Promise(function (resolve, reject) {
         const link = document.createElement('link');
+        link.id = name;
         link.rel = "stylesheet";
         link.type = "text/css";
-        link.href = sourceUrl;
+        link.href = url;
 
         link.addEventListener('load', function () {
-            // The script is loaded completely
+            // The stylesheet is loaded completely
             resolve(true);
         });
 
-        document.head.appendChild(script);
-    });
-};
+        link.addEventListener('error', function (error) {
+            reject(error);
+        });
 
-const meLoadScript = function (name, url) {
+        document.head.appendChild(link);
+    });
+}
+
+function meLoadScript(name, url) {
     if (document.getElementById(name))
         return;
 
@@ -447,7 +447,7 @@ const meLoadScript = function (name, url) {
 
         document.head.appendChild(script);
     });
-};
+}
 
 window.renderMermaidDiagram = async () => {
     const collection = document.getElementsByTagName("code");

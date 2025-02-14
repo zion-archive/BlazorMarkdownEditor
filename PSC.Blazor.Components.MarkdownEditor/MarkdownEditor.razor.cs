@@ -431,11 +431,13 @@ namespace PSC.Blazor.Components.MarkdownEditor
         [Parameter]
         public int TabSize { get; set; } = 2;
 
+
+        private EditorTheme _currentTheme;
         /// <summary>
-        /// Override the theme. Defaults to easymde.
+        /// Override the theme used in CodeMirror.
         /// </summary>
         [Parameter]
-        public string Theme { get; set; } = "easymde";
+        public EditorTheme Theme { get; set; } = EditorTheme.Default;
 
         /// <summary>
         /// [Optional] Gets or sets the content of the toolbar.
@@ -835,7 +837,7 @@ namespace PSC.Blazor.Components.MarkdownEditor
                     MaxHeight,
                     Placeholder,
                     TabSize,
-                    Theme,
+                    Theme = Theme.GetDescription(),
                     Direction,
                     NativeSpellChecker,
                     SpellChecker,
@@ -891,6 +893,19 @@ namespace PSC.Blazor.Components.MarkdownEditor
 
             base.OnInitialized();
         }
+        
+        /// <summary>
+        /// Razor override currently used for handling theme change.
+        /// </summary>
+        protected override async Task OnParametersSetAsync()
+        {
+            // Check if the theme has changed
+            if (_currentTheme != Theme)
+            {
+                _currentTheme = Theme;
+                await SetThemeAsync(Theme);
+            }
+        }
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -898,6 +913,24 @@ namespace PSC.Blazor.Components.MarkdownEditor
         public void Dispose()
         {
             JSModule?.Destroy(ElementRef, ElementId);
+        }
+        
+        /// <summary>
+        /// Private method used by OnParametersSetAsync to set the theme.
+        /// Downloads the CSS (if not loaded) and sets the theme to CodeMirror.
+        /// </summary>
+        /// <param name="theme">The theme to change CodeMirror to.</param>
+        private async Task SetThemeAsync(EditorTheme theme)
+        {
+            if (!Initialized)
+                return;
+            
+            string id = theme.GetDescription();
+            string url = Path.Join(FilePath.CodeMirrorThemesUrl, id + ".css");
+            
+            if (theme != EditorTheme.Default)
+                await JSModule.AddCSS(id, url);
+            await JSModule.SetTheme(ElementId, id);
         }
     }
 }

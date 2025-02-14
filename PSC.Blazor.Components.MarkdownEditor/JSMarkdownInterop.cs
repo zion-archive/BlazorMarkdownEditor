@@ -26,21 +26,23 @@
         /// <summary>
         /// Adds the CSS.
         /// </summary>
+        /// <param name="id">Identifier to prevent duplicate loading.</param>
         /// <param name="targetUrl">The target URL.</param>
         /// <returns></returns>
-        public async ValueTask AddCSS(string targetUrl)
+        public async ValueTask AddCSS(string id, string targetUrl)
         {
-            await jsRuntime.InvokeVoidAsync("meLoadCSS", targetUrl);
+            await jsRuntime.InvokeVoidAsync("meLoadCSS", id, targetUrl);
         }
 
         /// <summary>
         /// Adds the js.
         /// </summary>
+        /// <param name="id">Identifier to prevent duplicate loading.</param>
         /// <param name="targetUrl">The target URL.</param>
         /// <returns></returns>
-        public async ValueTask AddJS(string targetUrl)
+        public async ValueTask AddJS(string id, string targetUrl)
         {
-            await jsRuntime.InvokeVoidAsync("meLoadJs", targetUrl);
+            await jsRuntime.InvokeVoidAsync("meLoadJs", id, targetUrl);
         }
 
         /// <summary>
@@ -126,6 +128,18 @@
         public async ValueTask NotifyImageUploadSuccess(string elementId, string imageUrl)
         {
             await jsRuntime.InvokeVoidAsync("notifyImageUploadSuccess", elementId, imageUrl);
+        }
+        
+        /// <summary>
+        /// Sets the CodeMirror theme.
+        /// </summary>
+        /// <remarks>The theme CSS must be loaded before calling this method.</remarks>
+        /// <param name="elementId">The element identifier.</param>
+        /// <param name="theme">Name of the theme</param>
+        /// <returns></returns>
+        public async ValueTask SetTheme(string elementId, string theme)
+        {
+            await jsRuntime.InvokeVoidAsync("setTheme", elementId, theme);
         }
 
         /// <summary>
